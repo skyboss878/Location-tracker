@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Tracker</title>
+    <script>
+        function sendLocation(position) {
+            fetch("/log", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    timestamp: new Date().toISOString()
+                })
+            }).then(() => {
+                document.getElementById("status").innerText = "📍 Location sent successfully.";
+            }).catch(() => {
+                document.getElementById("status").innerText = "❌ Failed to send location.";
+            });
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendLocation, function(error) {
+                    document.getElementById("status").innerText = "❌ Location access denied.";
+                });
+            } else {
+                document.getElementById("status").innerText = "⚠️ Geolocation not supported.";
+            }
+        }
+
+        window.onload = getLocation;
+    </script>
+</head>
+<body>
+    <h2>🔍 Checking your location...</h2>
+    <p id="status">Waiting for permission...</p>
+</body>
+</html>
